@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Café Matinal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600&display=swap">
+  <style>
+    :root{
+      --espresso:#4B2B1E;--latte:#E3D5C6;--cream:#F5F0EB;--copper:#B87333;
+      --espresso-contrast:#2d1a12; /* mais escuro p/ contraste */
+    }
+    body{font-family:'Inter',sans-serif;background-color:var(--cream);color:var(--espresso);transition:background-color .3s,color .3s}
+    .serif{font-family:'Playfair Display',serif}
+    .card-shadow{box-shadow:0 4px 20px rgba(0,0,0,.08)}
+    .progress-bar{height:8px;border-radius:4px;background-color:rgba(75,43,30,.12)}
+    .progress-fill{height:100%;border-radius:4px;background-color:var(--copper);transition:width .4s ease}
+    .icon-btn{outline:2px solid transparent;outline-offset:2px}
+    .icon-btn:focus-visible{outline-color:var(--copper)}
+    .dark-mode{background:#121212;color:#fff}
+    .dark-mode .card-dark{background:#1E1E1E;color:#fff}
+    .dark-mode .card-shadow{background:#1E1E1E;box-shadow:0 4px 20px rgba(255,255,255,.05)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.5rem .9rem;font-weight:600}
+    .btn-primary{background:var(--copper);color:#fff}
+    .btn-primary:hover{filter:brightness(.95)}
+    .btn-outline{border:2px solid var(--copper);color:var(--copper);background:transparent}
+    .btn-outline:hover{background:rgba(184,115,51,.08)}
+    .btn-ghost{color:var(--copper)}
+    .btn-danger{color:#b91c1c}
+    .chip{border:1px solid #e5e7eb;border-radius:999px;padding:.15rem .5rem;font-size:.75rem}
+    .list-line:hover{background:rgba(0,0,0,.03)}
+    .dark-mode .list-line:hover{background:rgba(255,255,255,.06)}
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-[color:var(--espresso)] text-[color:var(--cream)] p-4 flex justify-between items-center">
+    <h1 class="text-xl font-semibold">Café Matinal</h1>
+    <div class="flex items-center gap-3">
+      <button id="themeToggle" class="icon-btn p-1 rounded-full" title="Tema">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+      </button>
+      <button id="langToggle" class="icon-btn text-sm font-semibold px-2 py-1 rounded">EN/PT</button>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <main id="homeScreen" class="flex-1 p-4 max-w-md mx-auto w-full">
+    <!-- Quote -->
+    <section class="mb-6">
+      <div class="bg-white rounded-2xl p-6 card-shadow card-dark">
+        <div class="flex items-center mb-4">
+          <div class="h-10 w-10 rounded-full bg-[color:var(--latte)] flex items-center justify-center mr-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[color:var(--espresso)]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8h18M8 21h8M7 8l1 10h8l1-10"/>
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">Café de Hoje</h2>
+        </div>
+        <p class="serif text-xl italic mb-4" id="quoteText">"O segredo para avançar é começar."</p>
+        <p class="text-right text-sm text-[color:var(--copper)]" id="quoteAuthor">— Mark Twain</p>
+      </div>
+    </section>
+
+    <!-- Streak -->
+    <section class="mb-6">
+      <div class="rounded-2xl p-4 text-[color:var(--cream)]" style="background:linear-gradient(135deg, var(--espresso-contrast), var(--espresso))">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold">Sequência Matinal</h3>
+            <p class="text-sm opacity-90">Sem redes sociais antes do meio-dia</p>
+          </div>
+          <div class="text-3xl font-bold">7</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Morning checklist (com exclusão) -->
+    <section class="mb-6">
+      <div class="bg-white rounded-2xl p-6 card-shadow card-dark">
+        <div class="flex items-center mb-3">
+          <div class="h-10 w-10 rounded-full bg-[color:var(--latte)] flex items-center justify-center mr-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[color:var(--espresso)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">Rotina Matinal</h2>
+        </div>
+
+        <div class="progress-bar mb-4"><div id="routineProgress" class="progress-fill" style="width: 0%"></div></div>
+
+        <ul id="morningList" class="space-y-2">
+          <!-- Render dinâmico -->
+        </ul>
+
+        <div class="mt-4 flex gap-2">
+          <button id="addMorningTask" class="btn btn-outline w-full">+ Item</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Daily Planner (com exclusão) -->
+    <section>
+      <div class="bg-white rounded-2xl p-6 card-shadow card-dark">
+        <div class="flex items-center mb-4">
+          <div class="h-10 w-10 rounded-full bg-[color:var(--latte)] flex items-center justify-center mr-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[color:var(--espresso)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">Planejamento Diário</h2>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-[color:var(--copper)]">Manhã</h3>
+            <button data-add="morning" class="btn btn-outline text-sm">+ Adicionar</button>
+          </div>
+          <ul id="planMorning" class="space-y-2"></ul>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-[color:var(--copper)]">Tarde</h3>
+            <button data-add="afternoon" class="btn btn-outline text-sm">+ Adicionar</button>
+          </div>
+          <ul id="planAfternoon" class="space-y-2"></ul>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-[color:var(--copper)]">Noite</h3>
+            <button data-add="evening" class="btn btn-outline text-sm">+ Adicionar</button>
+          </div>
+          <ul id="planEvening" class="space-y-2"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ROTINAS -->
+  <section id="routineScreen" class="hidden flex-1 p-4 max-w-md mx-auto w-full">
+    <div class="bg-white rounded-2xl p-6 card-shadow card-dark w-full">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold">Minhas Rotinas</h2>
+        <button id="addRoutineBtn" class="btn btn-primary">+ Nova Rotina</button>
+      </div>
+      <div id="routineList" class="space-y-4">
+        <!-- Rotinas renderizadas aqui -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDÁRIO -->
+  <section id="calendarScreen" class="hidden flex-1 p-4 max-w-md mx-auto w-full">
+    <div class="bg-white rounded-2xl p-6 card-shadow card-dark w-full">
+      <div class="flex items-center justify-between mb-4">
+        <button id="prevMonth" class="icon-btn p-2 rounded hover:bg-gray-100 dark:hover:bg-white/10" title="Mês anterior">
+          ◀
+        </button>
+        <h2 id="monthTitle" class="text-lg font-semibold">Mês Ano</h2>
+        <button id="nextMonth" class="icon-btn p-2 rounded hover:bg-gray-100 dark:hover:bg-white/10" title="Próximo mês">
+          ▶
+        </button>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-600 dark:text-gray-300 mb-2">
+        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+      </div>
+      <div id="calendarGrid" class="grid grid-cols-7 gap-1 mb-6">
+        <!-- Dias -->
+      </div>
+
+      <form id="eventForm" class="grid grid-cols-1 gap-2 md:grid-cols-3">
+        <input id="eventTitle" required placeholder="Título" class="border rounded px-3 py-2 outline-none focus:ring-2 focus:ring-[color:var(--copper)]"/>
+        <input id="eventDate" type="date" required class="border rounded px-3 py-2 outline-none focus:ring-2 focus:ring-[color:var(--copper)]"/>
+        <div class="flex gap-2">
+          <input id="eventTime" type="time" class="border rounded px-3 py-2 flex-1 outline-none focus:ring-2 focus:ring-[color:var(--copper)]"/>
+          <button class="btn btn-primary whitespace-nowrap" type="submit">Adicionar</button>
+        </div>
+      </form>
+
+      <div class="mt-5">
+        <h3 class="font-semibold mb-2">Próximos eventos</h3>
+        <div id="eventList" class="space-y-2">
+          <!-- Eventos -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="settingsScreen" class="hidden flex-1 p-4 max-w-md mx-auto w-full">
+    <div class="bg-white rounded-2xl p-6 card-shadow card-dark">
+      <h2 class="text-lg font-semibold mb-4">Configurações</h2>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <span>Modo Escuro</span>
+          <button id="themeToggleSettings" class="icon-btn p-1 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Idioma</span>
+          <button id="langToggleSettings" class="icon-btn text-sm font-semibold px-2 py-1 rounded">EN/PT</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <nav class="bg-white border-t border-gray-200 p-2">
+    <div class="flex justify-around max-w-md mx-auto">
+      <button id="navHome" class="p-2 text-[color:var(--copper)]" title="Início">🏠</button>
+      <button id="navRoutine" class="p-2 text-gray-400" title="Rotinas">🗒️</button>
+      <button id="navCalendar" class="p-2 text-gray-400" title="Calendário">📅</button>
+      <button id="navSettings" class="p-2 text-gray-400" title="Configurações">⚙️</button>
+    </div>
+  </nav>
+
+  <script>
+    /* ---------- Persistência ----------- */
+    const store = {
+      get(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback }catch{ return fallback } },
+      set(key, value){ localStorage.setItem(key, JSON.stringify(value)) }
+    };
+
+    /* ---------- Tema & Idioma ---------- */
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeToggleSettings = document.getElementById('themeToggleSettings');
+    const langToggle = document.getElementById('langToggle');
+    const langToggleSettings = document.getElementById('langToggleSettings');
+
+    function setDarkMode(on){
+      body.classList.toggle('dark-mode', on);
+      localStorage.setItem('darkMode', on ? 'true':'false');
+      const icon = themeToggle.querySelector('svg');
+      if(on){
+        icon.innerHTML='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+      }else{
+        icon.innerHTML='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+      }
+    }
+    setDarkMode(localStorage.getItem('darkMode')==='true');
+    themeToggle.addEventListener('click',()=> setDarkMode(!body.classList.contains('dark-mode')));
+    themeToggleSettings.addEventListener('click',()=> setDarkMode(!body.classList.contains('dark-mode')));
+
+    /* ---------- Navegação de telas ---------- */
+    const screens = {
+      home: document.getElementById('homeScreen'),
+      routine: document.getElementById('routineScreen'),
+      calendar: document.getElementById('calendarScreen'),
+      settings: document.getElementById('settingsScreen')
+    };
+    const navButtons = {
+      navHome: document.getElementById('navHome'),
+      navRoutine: document.getElementById('navRoutine'),
+      navCalendar: document.getElementById('navCalendar'),
+      navSettings: document.getElementById('navSettings')
+    };
+    function setActiveNav(activeId){
+      Object.keys(navButtons).forEach(id=>{
+        const btn=navButtons[id];
+        if(id===activeId){ btn.classList.remove('text-gray-400'); btn.classList.add('text-[color:var(--copper)]') }
+        else { btn.classList.remove('text-[color:var(--copper)]'); btn.classList.add('text-gray-400') }
+      });
+    }
+    function showScreen(which){
+      Object.values(screens).forEach(s=>s.classList.add('hidden'));
+      screens[which].classList.remove('hidden');
+      setActiveNav('nav'+which.charAt(0).toUpperCase()+which.slice(1));
+    }
+    navButtons.navHome.addEventListener('click',()=>showScreen('home'));
+    navButtons.navRoutine.addEventListener('click',()=>showScreen('routine'));
+    navButtons.navCalendar.addEventListener('click',()=>showScreen('calendar'));
+    navButtons.navSettings.addEventListener('click',()=>showScreen('settings'));
+    showScreen('home');
+
+    /* ---------- Frases ---------- */
+    const quotes = [
+      {text:'O segredo para avançar é começar.', author:'Mark Twain'},
+      {text:'Disciplina vence motivação.', author:'—'},
+      {text:'Comece pequeno. Vença hoje.', author:'—'},
+    ];
+    const q = quotes[(new Date()).getDate() % quotes.length];
+    document.getElementById('quoteText').textContent = `"${q.text}"`;
+    document.getElementById('quoteAuthor').textContent = `— ${q.author}`;
+
+    /* ---------- Checklist matinal (HOME) ---------- */
+    const defaultMorning = store.get('morningChecklist', [
+      {id:'1', label:"Beber um copo d'água", done:false},
+      {id:'2', label:'Alongamento de 5 minutos', done:false},
+      {id:'3', label:'Escrever no diário por 5 minutos', done:false},
+      {id:'4', label:'Ler 10 páginas', done:false},
+    ]);
+    const morningList = document.getElementById('morningList');
+    const progressFill = document.getElementById('routineProgress');
+
+    function renderMorning(){
+      morningList.innerHTML='';
+      defaultMorning.forEach(item=>{
+        const li=document.createElement('li');
+        li.className='list-line flex items-center justify-between p-2 rounded';
+        li.innerHTML=`
+          <label class="flex items-center gap-3 flex-1">
+            <input type="checkbox" ${item.done?'checked':''} class="h-5 w-5 accent-[color:var(--copper)]"/>
+            <span class="${item.done?'line-through text-gray-500':''}">${item.label}</span>
+          </label>
+          <button class="icon-btn text-red-600 p-2 rounded" title="Excluir">
+            🗑️
+          </button>
+        `;
+        const checkbox = li.querySelector('input');
+        checkbox.addEventListener('change',()=>{
+          item.done = checkbox.checked;
+          store.set('morningChecklist', defaultMorning);
+          renderMorning();
+        });
+        li.querySelector('button').addEventListener('click',()=>{
+          const idx=defaultMorning.findIndex(t=>t.id===item.id);
+          defaultMorning.splice(idx,1);
+          store.set('morningChecklist', defaultMorning);
+          renderMorning();
+        });
+        morningList.appendChild(li);
+      });
+      const completed = defaultMorning.filter(t=>t.done).length;
+      const pct = defaultMorning.length? (completed/defaultMorning.length)*100 : 0;
+      progressFill.style.width = `${pct}%`;
+    }
+    renderMorning();
+
+    document.getElementById('addMorningTask').addEventListener('click',()=>{
+      const name=prompt('Novo item da rotina matinal:');
+      if(name && name.trim()){
+        defaultMorning.push({id:Date.now().toString(), label:name.trim(), done:false});
+        store.set('morningChecklist', defaultMorning);
+        renderMorning();
+      }
+    });
+
+    /* ---------- Planner (HOME) ---------- */
+    const planner = store.get('planner', {
+      morning:[{id:'m1',label:'Revisar metas diárias',done:false},{id:'m2',label:'Reunião de equipe às 10:00',done:false}],
+      afternoon:[{id:'a1',label:'Trabalhar na proposta do projeto',done:false}],
+      evening:[{id:'e1',label:'Planejar agenda de amanhã',done:false},{id:'e2',label:'Ler antes de dormir',done:false}]
+    });
+    const lists = {
+      morning: document.getElementById('planMorning'),
+      afternoon: document.getElementById('planAfternoon'),
+      evening: document.getElementById('planEvening')
+    };
+    function renderPlan(period){
+      const ul = lists[period];
+      ul.innerHTML='';
+      planner[period].forEach(task=>{
+        const li=document.createElement('li');
+        li.className='list-line flex items-center justify-between p-2 rounded';
+        li.innerHTML=`
+          <label class="flex items-center gap-3 flex-1">
+            <input type="checkbox" ${task.done?'checked':''} class="h-5 w-5 accent-[color:var(--copper)]"/>
+            <span class="${task.done?'line-through text-gray-500':''}">${task.label}</span>
+          </label>
+          <button class="icon-btn text-red-600 p-2 rounded" title="Excluir">🗑️</button>
+        `;
+        li.querySelector('input').addEventListener('change',(e)=>{
+          task.done = e.target.checked;
+          store.set('planner', planner);
+          renderPlan(period);
+        });
+        li.querySelector('button').addEventListener('click',()=>{
+          planner[period] = planner[period].filter(t=>t.id!==task.id);
+          store.set('planner', planner);
+          renderPlan(period);
+        });
+        ul.appendChild(li);
+      });
+    }
+    ['morning','afternoon','evening'].forEach(renderPlan);
+    document.querySelectorAll('[data-add]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const period = btn.getAttribute('data-add');
+        const name = prompt(`Nova tarefa - ${period==='morning'?'Manhã':period==='afternoon'?'Tarde':'Noite'}:`);
+        if(name && name.trim()){
+          planner[period].push({id:period[0]+Date.now(), label:name.trim(), done:false});
+          store.set('planner', planner);
+          renderPlan(period);
+        }
+      });
+    });
+
+    /* ---------- Rotinas (tela Rotinas) ---------- */
+    const routines = store.get('routines', [
+      {id:'r1', name:'Rotina Matinal Básica', items:[
+        {id:'r1t1',label:'Acordar às 6:00',done:false},
+        {id:'r1t2',label:'Beber água',done:false},
+        {id:'r1t3',label:'Meditar 10 minutos',done:false},
+      ]},
+      {id:'r2', name:'Exercícios Matinais', items:[
+        {id:'r2t1',label:'Alongamento',done:false},
+        {id:'r2t2',label:'20 polichinelos',done:false},
+        {id:'r2t3',label:'Flexões',done:false},
+      ]},
+    ]);
+    const routineList = document.getElementById('routineList');
+    function renderRoutines(){
+      routineList.innerHTML='';
+      routines.forEach(r=>{
+        const card=document.createElement('div');
+        card.className='border border-gray-200 rounded-xl p-4';
+        card.innerHTML=`
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold">${r.name}</h3>
+            <div class="flex gap-2">
+              <button class="btn btn-outline text-sm" data-add-item>+ Item</button>
+              <button class="btn btn-danger text-sm" title="Excluir rotina" data-del>Excluir</button>
+            </div>
+          </div>
+          <ul class="space-y-2" data-list></ul>
+        `;
+        const list = card.querySelector('[data-list]');
+        r.items.forEach(it=>{
+          const li=document.createElement('li');
+          li.className='list-line flex items-center justify-between p-2 rounded';
+          li.innerHTML=`
+            <label class="flex items-center gap-3 flex-1">
+              <input type="checkbox" ${it.done?'checked':''} class="h-5 w-5 accent-[color:var(--copper)]"/>
+              <span class="${it.done?'line-through text-gray-500':''}">${it.label}</span>
+            </label>
+            <button class="icon-btn text-red-600 p-2 rounded" title="Excluir">🗑️</button>
+          `;
+          li.querySelector('input').addEventListener('change',(e)=>{
+            it.done = e.target.checked;
+            store.set('routines', routines);
+            renderRoutines();
+          });
+          li.querySelector('button').addEventListener('click',()=>{
+            r.items = r.items.filter(x=>x.id!==it.id);
+            store.set('routines', routines);
+            renderRoutines();
+          });
+          list.appendChild(li);
+        });
+
+        card.querySelector('[data-add-item]').addEventListener('click',()=>{
+          const name=prompt('Novo item da rotina:');
+          if(name && name.trim()){
+            r.items.push({id:r.id+'_'+Date.now(), label:name.trim(), done:false});
+            store.set('routines', routines);
+            renderRoutines();
+          }
+        });
+        card.querySelector('[data-del]').addEventListener('click',()=>{
+          const idx=routines.findIndex(x=>x.id===r.id);
+          routines.splice(idx,1);
+          store.set('routines', routines);
+          renderRoutines();
+        });
+        routineList.appendChild(card);
+      });
+    }
+    renderRoutines();
+    document.getElementById('addRoutineBtn').addEventListener('click',()=>{
+      const name=prompt('Nome da nova rotina:');
+      if(name && name.trim()){
+        routines.push({id:'r'+Date.now(), name:name.trim(), items:[]});
+        store.set('routines', routines);
+        renderRoutines();
+      }
+    });
+
+    /* ---------- Calendário ---------- */
+    const monthTitle = document.getElementById('monthTitle');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+    let current = new Date();
+    current.setDate(1);
+
+    const events = store.get('events', []); // {id,title,date:'YYYY-MM-DD',time}
+
+    function yyyyMMdd(d){
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${d.getFullYear()}-${m}-${day}`;
+    }
+    function renderEventsList(){
+      const list = document.getElementById('eventList');
+      const upcoming = [...events].sort((a,b)=>a.date.localeCompare(b.date));
+      list.innerHTML='';
+      if(upcoming.length===0){
+        list.innerHTML='<p class="text-sm text-gray-500">Nenhum evento.</p>'; return;
+      }
+      upcoming.forEach(ev=>{
+        const row=document.createElement('div');
+        row.className='flex items-center justify-between p-2 rounded border';
+        row.innerHTML=`
+          <div>
+            <div class="font-semibold">${ev.title}</div>
+            <div class="text-sm text-gray-600">${ev.date}${ev.time?(' - '+ev.time):''}</div>
+          </div>
+          <button class="icon-btn text-red-600 p-2 rounded" title="Excluir">🗑️</button>
+        `;
+        row.querySelector('button').addEventListener('click',()=>{
+          const idx = events.findIndex(e=>e.id===ev.id);
+          events.splice(idx,1);
+          store.set('events', events);
+          renderCalendar(); renderEventsList();
+        });
+        list.appendChild(row);
+      });
+    }
+    function renderCalendar(){
+      const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      monthTitle.textContent = `${monthNames[current.getMonth()]} ${current.getFullYear()}`;
+      calendarGrid.innerHTML='';
+      const firstDay = new Date(current.getFullYear(), current.getMonth(), 1).getDay();
+      const daysInMonth = new Date(current.getFullYear(), current.getMonth()+1, 0).getDate();
+
+      for(let i=0;i<firstDay;i++){
+        const cell=document.createElement('div'); cell.className='h-10'; calendarGrid.appendChild(cell);
+      }
+      for(let d=1; d<=daysInMonth; d++){
+        const date = new Date(current.getFullYear(), current.getMonth(), d);
+        const iso = yyyyMMdd(date);
+        const hasEvent = events.some(e=>e.date===iso);
+        const isToday = iso===yyyyMMdd(new Date());
+        const cell=document.createElement('div');
+        cell.className=`h-12 p-2 border rounded text-sm flex flex-col items-center justify-center ${isToday?'bg-[color:var(--copper)] text-white':'bg-white'}`
+        cell.innerHTML=`
+          <div class="font-medium">${d}</div>
+          ${hasEvent?'<span class="w-2 h-2 rounded-full bg-[color:var(--copper)] mt-1"></span>':''}
+        `;
+        calendarGrid.appendChild(cell);
+      }
+    }
+    prevMonthBtn.addEventListener('click',()=>{ current.setMonth(current.getMonth()-1); renderCalendar(); });
+    nextMonthBtn.addEventListener('click',()=>{ current.setMonth(current.getMonth()+1); renderCalendar(); });
+    renderCalendar(); renderEventsList();
+
+    document.getElementById('eventForm').addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const title=document.getElementById('eventTitle').value.trim();
+      const date=document.getElementById('eventDate').value;
+      const time=document.getElementById('eventTime').value;
+      if(!title || !date) return;
+      events.push({id:Date.now().toString(), title, date, time: time||''});
+      store.set('events', events);
+      e.target.reset();
+      renderCalendar(); renderEventsList();
+    });
+
+    /* ---------- Idioma (simplificado, título/quote) ---------- */
+    let currentLang='pt';
+    function setLang(l){
+      currentLang=l;
+      if(l==='pt'){
+        document.querySelector('h1').textContent='Café Matinal';
+      }else{
+        document.querySelector('h1').textContent='Morning Brew';
+      }
+    }
+    langToggle.addEventListener('click',()=> setLang(currentLang==='pt'?'en':'pt'));
+    langToggleSettings.addEventListener('click',()=> setLang(currentLang==='pt'?'en':'pt'));
+
+    /* ---------- Aviso de notificações (simulado, 1x) ---------- */
+    if(!localStorage.getItem('notificationRequested')){
+      setTimeout(()=>{
+        if(confirm('Café Matinal deseja enviar lembretes diários. Permitir?')){
+          alert('Lembretes ativados! Você receberá sua primeira mensagem amanhã de manhã.');
+        }
+        localStorage.setItem('notificationRequested','true');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
